@@ -25,6 +25,8 @@ namespace LineBotApp.Controllers
                     content = msg["content"]
                 });
 
+               
+
                 var uri = "https://trialbot-api.line.me/v1/events";
 
                 using (var client = new HttpClient())
