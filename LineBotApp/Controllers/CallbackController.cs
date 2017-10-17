@@ -30,9 +30,9 @@ namespace LineBotApp.Controllers
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json; charset=UTF-8");
-                    client.DefaultRequestHeaders.Add("X-Line-ChannelID", "1488211839");
-                    client.DefaultRequestHeaders.Add("X-Line-ChannelSecret", "3eec2a0e5a022b191d8f90330fbcaa20");
-                    client.DefaultRequestHeaders.Add("X-Line-Trusted-User-With-ACL", "U31152b71bad74963eedcefb93d751112");
+                    client.DefaultRequestHeaders.Add("X-Line-ChannelID", "");
+                    client.DefaultRequestHeaders.Add("X-Line-ChannelSecret", "");
+                    client.DefaultRequestHeaders.Add("X-Line-Trusted-User-With-ACL", "");
 
                     var content = new StringContent(message, Encoding.UTF8, "application/json");
 
