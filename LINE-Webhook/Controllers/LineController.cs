@@ -7,6 +7,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web.Configuration;
 using System.Web.Http;
 
 namespace LINE_Webhook.Controllers
@@ -14,7 +18,7 @@ namespace LINE_Webhook.Controllers
     [RoutePrefix("callback")]
     public class LINEController : ApiController
     {
-        
+        /*
         [HttpPost]
         [Route]
         [Signature]
@@ -41,7 +45,7 @@ namespace LINE_Webhook.Controllers
             return Ok(data);
         }
        
-       /*
+       
         [HttpPost]
         [Route]
         public IHttpActionResult webhook()
@@ -49,6 +53,27 @@ namespace LINE_Webhook.Controllers
             return Ok("OK");
         }
         */
+        [HttpPost]
+        [Route]
+        public async Task<HttpResponseMessage> Post(HttpRequestMessage request)
+        {
+            //return Request.CreateResponse(HttpStatusCode.OK, WebConfigurationManager.AppSettings["ChannelSecret"]);
+            
+            if (!await VaridateSignature(request))
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            return Request.CreateResponse(HttpStatusCode.OK);
+            
+        }
+
+        private async Task<bool> VaridateSignature(HttpRequestMessage request)
+        {
+            var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(WebConfigurationManager.AppSettings["ChannelSecret"]));
+            var computeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(await request.Content.ReadAsStringAsync()));
+            var contentHash = Convert.ToBase64String(computeHash);
+            var headerHash = Request.Headers.GetValues​​("X-Line-Signature").First();
+
+            return contentHash == headerHash;
+        }
 
         private List<SendMessage> procMessage(ReceiveMessage m)
         {
