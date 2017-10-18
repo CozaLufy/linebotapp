@@ -19,7 +19,7 @@ namespace LINE_Webhook.Controllers
     public class LINEController : ApiController
     {
         
-        //[HttpPost]
+        [HttpPost]
         [Route]
         [Signature]
         public IHttpActionResult webhook([FromBody] LineWebhookModels data)
@@ -27,6 +27,7 @@ namespace LINE_Webhook.Controllers
             if (data == null) return BadRequest();
             if (data.events == null) return BadRequest();
             
+            /*
             foreach (Event e in data.events)
             {
                 if (e.type == EventType.message)
@@ -41,8 +42,9 @@ namespace LINE_Webhook.Controllers
 
                 }
             }
-            
-            return Ok(data);
+            */
+            return Ok();
+           
         }
        
        /*
