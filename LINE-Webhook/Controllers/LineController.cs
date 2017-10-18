@@ -11,7 +11,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Configuration;
+using System.Web.Helpers;
 using System.Web.Http;
+using Newtonsoft.Json;
 
 namespace LINE_Webhook.Controllers
 {
@@ -27,7 +29,7 @@ namespace LINE_Webhook.Controllers
         {
             if (data == null) return BadRequest();
             if (data.events == null) return BadRequest();
-            Trace.TraceInformation("data.events " + data.events.ToString());
+            Trace.TraceInformation("data.events " + JsonConvert.SerializeObject(data.events));
             foreach (Event e in data.events)
             {
                 if (e.type == EventType.message)
@@ -53,31 +55,6 @@ namespace LINE_Webhook.Controllers
 
         }
  
-        /*
-         [HttpPost]
-         [Route]
-         public async Task<HttpResponseMessage> Post(HttpRequestMessage request)
-         {
-             //return Request.CreateResponse(HttpStatusCode.OK, WebConfigurationManager.AppSettings["ChannelSecret"]);
-
-             //if (!await VaridateSignature(request))
-                 //return Request.CreateResponse(HttpStatusCode.BadRequest);
-             return Request.CreateResponse(HttpStatusCode.OK);
-
-         }
-         */
-        /*
-        private async Task<bool> VaridateSignature(HttpRequestMessage request)
-        {
-            var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(WebConfigurationManager.AppSettings["ChannelSecret"]));
-            var computeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(await request.Content.ReadAsStringAsync()));
-            var contentHash = Convert.ToBase64String(computeHash);
-            var headerHash = Request.Headers.GetValues​​("X-Line-Signature").First();
-
-            return contentHash == headerHash;
-        }
-
-        */
 
         private List<SendMessage> procMessage(ReceiveMessage m)
         {
