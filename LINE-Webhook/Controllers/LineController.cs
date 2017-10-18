@@ -18,8 +18,8 @@ namespace LINE_Webhook.Controllers
     [RoutePrefix("callback")]
     public class LINEController : ApiController
     {
-        /*
-        [HttpPost]
+        
+        //[HttpPost]
         [Route]
         [Signature]
         public IHttpActionResult webhook([FromBody] LineWebhookModels data)
@@ -45,7 +45,7 @@ namespace LINE_Webhook.Controllers
             return Ok(data);
         }
        
-       
+       /*
         [HttpPost]
         [Route]
         public IHttpActionResult webhook()
@@ -53,6 +53,7 @@ namespace LINE_Webhook.Controllers
             return Ok("OK");
         }
         */
+        /*
         [HttpPost]
         [Route]
         public async Task<HttpResponseMessage> Post(HttpRequestMessage request)
@@ -74,6 +75,8 @@ namespace LINE_Webhook.Controllers
 
             return contentHash == headerHash;
         }
+
+        */
 
         private List<SendMessage> procMessage(ReceiveMessage m)
         {
