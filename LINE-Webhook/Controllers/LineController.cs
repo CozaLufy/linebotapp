@@ -11,10 +11,10 @@ using System.Web.Http;
 
 namespace LINE_Webhook.Controllers
 {
-    [RoutePrefix("line")]
+    [RoutePrefix("callback")]
     public class LINEController : ApiController
     {
-        /*
+        
         [HttpPost]
         [Route]
         [Signature]
@@ -40,14 +40,15 @@ namespace LINE_Webhook.Controllers
             
             return Ok(data);
         }
-       */
-
+       
+       /*
         [HttpPost]
         [Route]
         public IHttpActionResult webhook()
         {
             return Ok("OK");
         }
+        */
 
         private List<SendMessage> procMessage(ReceiveMessage m)
         {
