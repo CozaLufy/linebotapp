@@ -27,63 +27,57 @@ namespace LINE_Webhook.Controllers
         {
             if (data == null) return BadRequest();
             if (data.events == null) return BadRequest();
-            System.Diagnostics.Trace.TraceInformation(data.ToString());
-            return Ok(data);
-            /*
+            Trace.TraceInformation("data.events " + data.events.ToString());
             foreach (Event e in data.events)
             {
                 if (e.type == EventType.message)
                 {
-                    ReplyBody rb = new ReplyBody()
+                    string senderID = "";
+                    switch (e.source.type)
                     {
-                        replyToken = e.replyToken,
-                        messages = procMessage(e.message)
-                    };
-                    Reply reply = new Reply(rb);
-                    reply.send();
-
+                        case SourceType.user:
+                            senderID = e.source.userId;
+                            break;
+                        case SourceType.room:
+                            senderID = e.source.roomId;
+                            break;
+                        case SourceType.group:
+                            senderID = e.source.groupId;
+                            break;
+                    }
+                    Trace.WriteLine("senderID " + senderID);
+                    Trace.WriteLine("e.message.text " + e.message.text);
                 }
             }
-           
             return Ok();
-            */
-           
-        }
 
-        
+        }
+ 
         /*
          [HttpPost]
          [Route]
-         public IHttpActionResult webhook()
+         public async Task<HttpResponseMessage> Post(HttpRequestMessage request)
          {
-             return Ok("OK");
+             //return Request.CreateResponse(HttpStatusCode.OK, WebConfigurationManager.AppSettings["ChannelSecret"]);
+
+             //if (!await VaridateSignature(request))
+                 //return Request.CreateResponse(HttpStatusCode.BadRequest);
+             return Request.CreateResponse(HttpStatusCode.OK);
+
          }
          */
-            /*
-             [HttpPost]
-             [Route]
-             public async Task<HttpResponseMessage> Post(HttpRequestMessage request)
-             {
-                 //return Request.CreateResponse(HttpStatusCode.OK, WebConfigurationManager.AppSettings["ChannelSecret"]);
+        /*
+        private async Task<bool> VaridateSignature(HttpRequestMessage request)
+        {
+            var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(WebConfigurationManager.AppSettings["ChannelSecret"]));
+            var computeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(await request.Content.ReadAsStringAsync()));
+            var contentHash = Convert.ToBase64String(computeHash);
+            var headerHash = Request.Headers.GetValues​​("X-Line-Signature").First();
 
-                 //if (!await VaridateSignature(request))
-                     //return Request.CreateResponse(HttpStatusCode.BadRequest);
-                 return Request.CreateResponse(HttpStatusCode.OK);
+            return contentHash == headerHash;
+        }
 
-             }
-             */
-            /*
-            private async Task<bool> VaridateSignature(HttpRequestMessage request)
-            {
-                var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(WebConfigurationManager.AppSettings["ChannelSecret"]));
-                var computeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(await request.Content.ReadAsStringAsync()));
-                var contentHash = Convert.ToBase64String(computeHash);
-                var headerHash = Request.Headers.GetValues​​("X-Line-Signature").First();
-
-                return contentHash == headerHash;
-            }
-
-            */
+        */
 
         private List<SendMessage> procMessage(ReceiveMessage m)
         {
