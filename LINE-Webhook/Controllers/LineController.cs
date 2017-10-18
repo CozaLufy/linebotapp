@@ -15,13 +15,13 @@ using System.Web.Http;
 
 namespace LINE_Webhook.Controllers
 {
-    [RoutePrefix("callback")]
+    [RoutePrefix("line")]
     public class LINEController : ApiController
     {
         
         [HttpPost]
         [Route]
-        [Signature]
+        //[Signature]
         public IHttpActionResult webhook([FromBody] LineWebhookModels data)
         {
             if (data == null) return BadRequest();
