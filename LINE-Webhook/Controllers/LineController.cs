@@ -27,7 +27,7 @@ namespace LINE_Webhook.Controllers
         {
             if (data == null) return BadRequest();
             if (data.events == null) return BadRequest();
-            System.Diagnostics.Debug.Print(data.ToString());
+            System.Diagnostics.Trace.TraceInformation(data.ToString());
             return Ok(data);
             /*
             foreach (Event e in data.events)
