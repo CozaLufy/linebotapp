@@ -50,10 +50,7 @@ namespace LINE_Webhook.Controllers
            
         }
 
-
         
-      
-
         /*
          [HttpPost]
          [Route]
