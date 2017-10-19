@@ -24,6 +24,7 @@ namespace RUSE.API.LINE
                 --- set header and body required infos ---
             */
             Trace.TraceInformation("send Reply Body " + JsonConvert.SerializeObject(body));
+            Trace.TraceInformation("AccessToken " + WebConfigurationManager.AppSettings["AccessToken"]);
             req = (HttpWebRequest)WebRequest.Create(API_URL);
             req.Method = "POST";
             req.ContentType = "application/json";
