@@ -89,7 +89,7 @@ namespace LINE_Webhook.Controllers
                 foreach (Event e in dataEvent.events)
                 {
                     sm.type = Enum.GetName(typeof(MessageType), e.type);
-                    sm.text = content;
+                    sm.text = e.message.text;
                     Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
                     msgs.Add(sm);
                     Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
