@@ -14,6 +14,7 @@ using System.Web.Configuration;
 using System.Web.Helpers;
 using System.Web.Http;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace LINE_Webhook.Controllers
 {
@@ -64,15 +65,16 @@ namespace LINE_Webhook.Controllers
             {
                 sm.type = Enum.GetName(typeof(MessageType), e.type);
                 sm.text = content;
-                Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
+                //Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
                 msgs.Add(sm);
-                Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
+                //Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
                 ReplyBody rb = new ReplyBody()
                 {
                     replyToken = e.replyToken,
                     messages = msgs
                 };
-                Reply reply = new Reply(rb);
+                Trace.TraceInformation("rb " + JsonConvert.SerializeObject(rb));
+                //Reply reply = new Reply(rb);
                 //reply.send();
             }
         }
@@ -98,13 +100,47 @@ namespace LINE_Webhook.Controllers
                         replyToken = e.replyToken,
                         messages = msgs
                     };
-                    Reply reply = new Reply(rb);
-                    reply.send();
+
+                    var message = JsonConvert.SerializeObject(rb);
+
+                    using (var client = new HttpClient())
+                    {
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", WebConfigurationManager.AppSettings["AccessToken"]);
+
+                        var dataString = new StringContent(message, Encoding.UTF8, "application/json");
+
+                        var result = await client.PostAsync("https://api.line.me/v2/bot/message/reply", dataString);
+
+                        if (!result.IsSuccessStatusCode)
+                        {
+                            throw new LineRequestException(result);
+                        }
+                    }
+
                 }
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
 
             return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+        }
+
+        public class LineRequestException : Exception
+        {
+            public override string Message { get; }
+
+            public LineRequestException(HttpResponseMessage response)
+            {
+                var statusCode = (int)response.StatusCode;
+                var reasonPhrase = response.ReasonPhrase;
+                var content = response.Content.ReadAsStringAsync().Result;
+
+                Message = string.Join(Environment.NewLine,
+                    $"StatusCode: {statusCode}",
+                    $"ReasonPhrase: {reasonPhrase}",
+                    $"Content: {content}");
+                Trace.TraceInformation("LineRequestException " + Message);
+            }
         }
         /*
         private List<SendMessage> procMessage(ReceiveMessage m)
