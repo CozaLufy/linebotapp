@@ -51,8 +51,8 @@ namespace LINE_Webhook.Models
     }
 
     public class ReceiveMessage : Message<MessageType> { }
-    //public class SendMessage : ReplyMessage<string> { }
-    public class SendMessage : Message<string> { }
+    public class SendMessage : ReplyMessage<string> { }
+    //public class SendMessage : Message<string> { }
     public class ReplyBody
     {
         public string replyToken { get; set; }
