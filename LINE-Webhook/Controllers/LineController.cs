@@ -20,8 +20,8 @@ namespace LINE_Webhook.Controllers
     [RoutePrefix("line")]
     public class LINEController : ApiController
     {
-        
         [HttpPost]
+        //[HttpGet]
         [Route]
         [Signature]
         /*
@@ -52,9 +52,31 @@ namespace LINE_Webhook.Controllers
                  }
              }
              return Ok();
-             1507539159516.jpg
          }
-  */
+
+        public void Get()
+        {
+            string content = "{\"events\":[{\"type\":\"message\",\"replyToken\":\"568e2864472844f18c2c6c7a975f38fd\",\"source\":{\"userId\":\"U9064a2310b6a52cdbb0682912ba6179c\",\"type\":\"user\"},\"timestamp\":1508381966322,\"message\":{\"type\":\"text\",\"id\":\"6862464788030\",\"text\":\"Test\"}}]}";
+            LineWebhookModels dataEvent = JsonConvert.DeserializeObject<LineWebhookModels>(content);
+            List<SendMessage> msgs = new List<SendMessage>();
+            SendMessage sm = new SendMessage();
+            foreach (Event e in dataEvent.events)
+            {
+                sm.type = Enum.GetName(typeof(MessageType), e.type);
+                sm.text = content;
+                Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
+                msgs.Add(sm);
+                Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
+                ReplyBody rb = new ReplyBody()
+                {
+                    replyToken = e.replyToken,
+                    messages = msgs
+                };
+                Reply reply = new Reply(rb);
+                //reply.send();
+            }
+        }
+*/
         public async Task<HttpResponseMessage> Post(HttpRequestMessage request)
         {
             if (request != null)
@@ -68,7 +90,9 @@ namespace LINE_Webhook.Controllers
                 {
                     sm.type = Enum.GetName(typeof(MessageType), e.type);
                     sm.text = content;
+                    Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
                     msgs.Add(sm);
+                    Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
                     ReplyBody rb = new ReplyBody()
                     {
                         replyToken = e.replyToken,
@@ -82,7 +106,7 @@ namespace LINE_Webhook.Controllers
 
             return Request.CreateResponse(HttpStatusCode.NotAcceptable);
         }
-
+        /*
         private List<SendMessage> procMessage(ReceiveMessage m)
         {
             List<SendMessage> msgs = new List<SendMessage>();
@@ -108,6 +132,6 @@ namespace LINE_Webhook.Controllers
             return msgs;
         }
 
-
+    */
     }
 }

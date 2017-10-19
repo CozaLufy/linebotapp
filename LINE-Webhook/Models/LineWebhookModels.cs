@@ -44,8 +44,14 @@ namespace LINE_Webhook.Models
         public string stickerId { get; set; }
     }
 
+    public abstract class ReplyMessage<T>
+    {
+        public T type { get; set; }
+        public string text { get; set; }
+    }
+
     public class ReceiveMessage : Message<MessageType> { }
-    public class SendMessage : Message<string> { }
+    public class SendMessage : ReplyMessage<string> { }
 
     public class ReplyBody
     {
