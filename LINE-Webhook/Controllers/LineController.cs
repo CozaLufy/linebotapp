@@ -92,9 +92,26 @@ namespace LINE_Webhook.Controllers
                             replyToken = e.replyToken,
                             messages = procMessage(e.message)
                         };
-                        //Trace.TraceInformation("rb " + JsonConvert.SerializeObject(rb));
-                        Reply reply = new Reply(rb);
-                        reply.send();
+                        Trace.TraceInformation("rb " + JsonConvert.SerializeObject(rb));
+                        //Reply reply = new Reply(rb);
+                        //reply.send();
+
+                        var message = JsonConvert.SerializeObject(rb);
+
+                        using (var client = new HttpClient())
+                        {
+                            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", WebConfigurationManager.AppSettings["AccessToken"]);
+
+                            var dataString = new StringContent(message, Encoding.UTF8, "application/json");
+
+                            var result = await client.PostAsync("https://api.line.me/v2/bot/message/reply", dataString);
+
+                            if (!result.IsSuccessStatusCode)
+                            {
+                                throw new LineRequestException(result);
+                            }
+                        }
                     }
                 }
                 /*
