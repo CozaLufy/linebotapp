@@ -23,6 +23,7 @@ namespace RUSE.API.LINE
             /*
                 --- set header and body required infos ---
             */
+            Trace.TraceInformation("send Reply Body " + JsonConvert.SerializeObject(body));
             req = WebRequest.Create(API_URL);
             req.Method = "POST";
             req.ContentType = "application/json";
@@ -54,6 +55,7 @@ namespace RUSE.API.LINE
             {
                 Trace.WriteLine(ex.ToString());
             }
+            Trace.TraceInformation("send result " + JsonConvert.SerializeObject(result));
             return result;
         }
     }

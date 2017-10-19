@@ -52,16 +52,35 @@ namespace LINE_Webhook.Controllers
                  }
              }
              return Ok();
-
+             1507539159516.jpg
          }
   */
         public async Task<HttpResponseMessage> Post(HttpRequestMessage request)
         {
-           
-            var content = await request.Content.ReadAsStringAsync();
-            Trace.TraceInformation("request content " + JsonConvert.SerializeObject(content));
-            //Logger.Info(" request = " + content);
-            return Request.CreateResponse(HttpStatusCode.OK);
+            if (request != null)
+            {
+                var content = await request.Content.ReadAsStringAsync();
+                Trace.TraceInformation("request content " + content);
+                LineWebhookModels dataEvent = JsonConvert.DeserializeObject<LineWebhookModels>(content);
+                List<SendMessage> msgs = new List<SendMessage>();
+                SendMessage sm = new SendMessage();
+                foreach (Event e in dataEvent.events)
+                {
+                    sm.type = Enum.GetName(typeof(MessageType), e.type);
+                    sm.text = content;
+                    msgs.Add(sm);
+                    ReplyBody rb = new ReplyBody()
+                    {
+                        replyToken = e.replyToken,
+                        messages = msgs
+                    };
+                    Reply reply = new Reply(rb);
+                    reply.send();
+                }
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
         }
 
         private List<SendMessage> procMessage(ReceiveMessage m)
