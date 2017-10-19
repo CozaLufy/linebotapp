@@ -54,31 +54,28 @@ namespace LINE_Webhook.Controllers
              }
              return Ok();
          }
-
+*/
         public void Get()
         {
             string content = "{\"events\":[{\"type\":\"message\",\"replyToken\":\"568e2864472844f18c2c6c7a975f38fd\",\"source\":{\"userId\":\"U9064a2310b6a52cdbb0682912ba6179c\",\"type\":\"user\"},\"timestamp\":1508381966322,\"message\":{\"type\":\"text\",\"id\":\"6862464788030\",\"text\":\"Test\"}}]}";
             LineWebhookModels dataEvent = JsonConvert.DeserializeObject<LineWebhookModels>(content);
-            List<SendMessage> msgs = new List<SendMessage>();
-            SendMessage sm = new SendMessage();
+            
             foreach (Event e in dataEvent.events)
             {
-                sm.type = Enum.GetName(typeof(MessageType), e.type);
-                sm.text = content;
-                //Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
-                msgs.Add(sm);
-                //Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
-                ReplyBody rb = new ReplyBody()
+                if (e.type == EventType.message)
                 {
-                    replyToken = e.replyToken,
-                    messages = msgs
-                };
-                Trace.TraceInformation("rb " + JsonConvert.SerializeObject(rb));
-                //Reply reply = new Reply(rb);
-                //reply.send();
+                    ReplyBody rb = new ReplyBody()
+                    {
+                        replyToken = e.replyToken,
+                        messages = procMessage(e.message)
+                    };
+                    Trace.TraceInformation("rb " + JsonConvert.SerializeObject(rb));
+                    //Reply reply = new Reply(rb);
+                    //reply.send();
+                }
             }
         }
-*/
+       
         public async Task<HttpResponseMessage> Post(HttpRequestMessage request)
         {
             if (request != null)
@@ -86,6 +83,21 @@ namespace LINE_Webhook.Controllers
                 var content = await request.Content.ReadAsStringAsync();
                 Trace.TraceInformation("request content " + content);
                 LineWebhookModels dataEvent = JsonConvert.DeserializeObject<LineWebhookModels>(content);
+                foreach (Event e in dataEvent.events)
+                {
+                    if (e.type == EventType.message)
+                    {
+                        ReplyBody rb = new ReplyBody()
+                        {
+                            replyToken = e.replyToken,
+                            messages = procMessage(e.message)
+                        };
+                        //Trace.TraceInformation("rb " + JsonConvert.SerializeObject(rb));
+                        Reply reply = new Reply(rb);
+                        reply.send();
+                    }
+                }
+                /*
                 List<SendMessage> msgs = new List<SendMessage>();
                 SendMessage sm = new SendMessage();
                 foreach (Event e in dataEvent.events)
@@ -100,6 +112,7 @@ namespace LINE_Webhook.Controllers
                         replyToken = e.replyToken,
                         messages = msgs
                     };
+                    
 
                     var message = JsonConvert.SerializeObject(rb);
 
@@ -119,6 +132,9 @@ namespace LINE_Webhook.Controllers
                     }
 
                 }
+                */
+
+
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
 
@@ -142,7 +158,7 @@ namespace LINE_Webhook.Controllers
                 Trace.TraceInformation("LineRequestException " + Message);
             }
         }
-        /*
+       
         private List<SendMessage> procMessage(ReceiveMessage m)
         {
             List<SendMessage> msgs = new List<SendMessage>();
@@ -168,6 +184,6 @@ namespace LINE_Webhook.Controllers
             return msgs;
         }
 
-    */
+    
     }
 }

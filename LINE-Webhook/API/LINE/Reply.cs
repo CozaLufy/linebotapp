@@ -1,5 +1,6 @@
 ﻿using LINE_Webhook.Models;
 using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -24,11 +25,10 @@ namespace RUSE.API.LINE
                 --- set header and body required infos ---
             */
             Trace.TraceInformation("send Reply Body " + JsonConvert.SerializeObject(body));
-            Trace.TraceInformation("AccessToken " + WebConfigurationManager.AppSettings["AccessToken"]);
+           // Trace.TraceInformation("AccessToken " + WebConfigurationManager.AppSettings["AccessToken"]);
             req = (HttpWebRequest)WebRequest.Create(API_URL);
             req.Method = "POST";
             req.ContentType = "application/json";
-            //req.Headers["Authorization"] = "Bearer " + WebConfigurationManager.AppSettings["AccessToken"];
             req.Headers.Add("Authorization", "Bearer " + WebConfigurationManager.AppSettings["AccessToken"]);
 
             using (var streamWriter = new StreamWriter(req.GetRequestStream()))
@@ -53,11 +53,12 @@ namespace RUSE.API.LINE
                     result = streamReader.ReadToEnd();
                 }
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
-                Trace.WriteLine(ex.ToString());
+                //Trace.WriteLine(ex.ToString());
+                Trace.TraceInformation("WebException " + JsonConvert.SerializeObject(ex.ToString()));
             }
-            Trace.TraceInformation("send result " + JsonConvert.SerializeObject(result));
+            
             return result;
         }
     }
