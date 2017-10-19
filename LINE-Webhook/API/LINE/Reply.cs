@@ -24,10 +24,11 @@ namespace RUSE.API.LINE
                 --- set header and body required infos ---
             */
             Trace.TraceInformation("send Reply Body " + JsonConvert.SerializeObject(body));
-            req = WebRequest.Create(API_URL);
+            req = (HttpWebRequest)WebRequest.Create(API_URL);
             req.Method = "POST";
             req.ContentType = "application/json";
-            req.Headers["Authorization"] = "Bearer " + WebConfigurationManager.AppSettings["AccessToken"];
+            //req.Headers["Authorization"] = "Bearer " + WebConfigurationManager.AppSettings["AccessToken"];
+            req.Headers.Add("Authorization", "Bearer " + WebConfigurationManager.AppSettings["AccessToken"]);
 
             using (var streamWriter = new StreamWriter(req.GetRequestStream()))
             {
@@ -45,7 +46,7 @@ namespace RUSE.API.LINE
             string result = null;
             try
             {
-                WebResponse response = req.GetResponse();
+                var response = (HttpWebResponse)req.GetResponse();
                 using (var streamReader = new StreamReader(response.GetResponseStream()))
                 {
                     result = streamReader.ReadToEnd();
