@@ -84,7 +84,7 @@ namespace LINE_Webhook.Controllers
                 var content = await request.Content.ReadAsStringAsync();
                 Trace.TraceInformation("request content " + content);
                 LineWebhookModels dataEvent = JsonConvert.DeserializeObject<LineWebhookModels>(content);
-                /*
+                /*54.235.159.192
                 foreach (Event e in dataEvent.events)
                 {
                     if (e.type == EventType.message)
@@ -117,7 +117,7 @@ namespace LINE_Webhook.Controllers
                     }
                 }
                 */
-               
+
                 List<SendMessage> msgs = new List<SendMessage>();
                 SendMessage sm = new SendMessage();
                 foreach (Event e in dataEvent.events)
