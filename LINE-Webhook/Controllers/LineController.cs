@@ -24,37 +24,45 @@ namespace LINE_Webhook.Controllers
         [HttpPost]
         [Route]
         [Signature]
-       
-        public IHttpActionResult webhook([FromBody] LineWebhookModels data)
-        {
-            if (data == null) return BadRequest();
-            if (data.events == null) return BadRequest();
-            Trace.TraceInformation("data.events " + JsonConvert.SerializeObject(data.events));
-            foreach (Event e in data.events)
-            {
-                if (e.type == EventType.message)
-                {
-                    string senderID = "";
-                    switch (e.source.type)
-                    {
-                        case SourceType.user:
-                            senderID = e.source.userId;
-                            break;
-                        case SourceType.room:
-                            senderID = e.source.roomId;
-                            break;
-                        case SourceType.group:
-                            senderID = e.source.groupId;
-                            break;
-                    }
-                    Trace.WriteLine("senderID " + senderID);
-                    Trace.WriteLine("e.message.text " + e.message.text);
-                }
-            }
-            return Ok();
+        /*
+         public IHttpActionResult webhook([FromBody] LineWebhookModels data)
+         {
+             if (data == null) return BadRequest();
+             if (data.events == null) return BadRequest();
+             Trace.TraceInformation("data.events " + JsonConvert.SerializeObject(data.events));
+             foreach (Event e in data.events)
+             {
+                 if (e.type == EventType.message)
+                 {
+                     string senderID = "";
+                     switch (e.source.type)
+                     {
+                         case SourceType.user:
+                             senderID = e.source.userId;
+                             break;
+                         case SourceType.room:
+                             senderID = e.source.roomId;
+                             break;
+                         case SourceType.group:
+                             senderID = e.source.groupId;
+                             break;
+                     }
+                     Trace.WriteLine("senderID " + senderID);
+                     Trace.WriteLine("e.message.text " + e.message.text);
+                 }
+             }
+             return Ok();
 
+         }
+  */
+        public async Task<HttpResponseMessage> Post(HttpRequestMessage request)
+        {
+           
+            var content = await request.Content.ReadAsStringAsync();
+            Trace.TraceInformation("request content " + JsonConvert.SerializeObject(content));
+            //Logger.Info(" request = " + content);
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
- 
 
         private List<SendMessage> procMessage(ReceiveMessage m)
         {
