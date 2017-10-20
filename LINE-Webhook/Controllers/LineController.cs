@@ -54,12 +54,12 @@ namespace LINE_Webhook.Controllers
              }
              return Ok();
          }
-*/
+
         public void Get()
         {
             string content = "{\"events\":[{\"type\":\"message\",\"replyToken\":\"568e2864472844f18c2c6c7a975f38fd\",\"source\":{\"userId\":\"U9064a2310b6a52cdbb0682912ba6179c\",\"type\":\"user\"},\"timestamp\":1508381966322,\"message\":{\"type\":\"text\",\"id\":\"6862464788030\",\"text\":\"Test\"}}]}";
             LineWebhookModels dataEvent = JsonConvert.DeserializeObject<LineWebhookModels>(content);
-            /*
+            
             foreach (Event e in dataEvent.events)
             {
                 if (e.type == EventType.message)
@@ -74,9 +74,9 @@ namespace LINE_Webhook.Controllers
                     //reply.send();
                 }
             }
-            */
+            
         }
-       
+       */
         public async Task<HttpResponseMessage> Post(HttpRequestMessage request)
         {
             if (request != null)
