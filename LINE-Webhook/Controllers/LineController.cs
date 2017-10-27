@@ -51,28 +51,39 @@ namespace LINE_Webhook.Controllers
 
                     var message = JsonConvert.SerializeObject(rb);
                     Trace.TraceInformation("message " + message);
-                    using (var client = new HttpClient())
+                    replyMessage(message);
+                    Task t = Task.Run(() =>
                     {
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", WebConfigurationManager.AppSettings["AccessToken"]);
+                        replyMessage(message);
+                    });
+                    TimeSpan ts = TimeSpan.FromMilliseconds(500);
+                    if (!t.Wait(ts))
+                        Trace.TraceInformation("The timeout interval elapsed.");
 
-                        var dataString = new StringContent(message, Encoding.UTF8, "application/json");
-
-                        var result = await client.PostAsync("https://api.line.me/v2/bot/message/reply", dataString);
-
-                        if (!result.IsSuccessStatusCode)
-                        {
-                            throw new LineRequestException(result);
-                        }
-                    }
-
-                }               
-
+                }
 
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
 
             return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+        }
+
+        public async void replyMessage(string message)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", WebConfigurationManager.AppSettings["AccessToken"]);
+
+                var dataString = new StringContent(message, Encoding.UTF8, "application/json");
+
+                var result = await client.PostAsync("https://api.line.me/v2/bot/message/reply", dataString);
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    throw new LineRequestException(result);
+                }
+            }
         }
 
         public class LineRequestException : Exception
