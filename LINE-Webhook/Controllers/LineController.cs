@@ -54,9 +54,11 @@ namespace LINE_Webhook.Controllers
                 var content = await request.Content.ReadAsStringAsync();
                 Trace.TraceInformation("request content " + content);
                 LineWebhookModels dataEvent = JsonConvert.DeserializeObject<LineWebhookModels>(content);
+                /*
                 List<SendMessage> msgWait = new List<SendMessage>();
                 var msgTxtWait = new SendMessage() { type = "text", text = "Please wait" };
                 msgWait.Add(msgTxtWait);
+                */
                 List<SendMessage> msgs = new List<SendMessage>();
                 SendMessage sm = new SendMessage();
 
@@ -67,23 +69,24 @@ namespace LINE_Webhook.Controllers
                     Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
                     msgs.Add(sm);
                     Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
+                    /*
                     ReplyBody rbWait = new ReplyBody()
                     {
                         replyToken = e.replyToken,
                         messages = msgWait
                     };
-
+                    */
                     ReplyBody rb = new ReplyBody()
                     {
                         replyToken = e.replyToken,
                         messages = msgs
                     };
 
-                    var messageWait = JsonConvert.SerializeObject(rbWait);
+                    //var messageWait = JsonConvert.SerializeObject(rbWait);
                     var message = JsonConvert.SerializeObject(rb);
-                    Trace.TraceInformation("messageWait " + messageWait);
-                    replyMessage(messageWait);
-                    System.Threading.Thread.Sleep(3000);
+                    //Trace.TraceInformation("messageWait " + messageWait);
+                    //replyMessage(messageWait);
+                    //System.Threading.Thread.Sleep(3000);
                     Trace.TraceInformation("message " + message);
                     replyMessage(message);
 
