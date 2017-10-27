@@ -20,21 +20,46 @@ namespace LINE_Webhook.Controllers
 {
     [RoutePrefix("callback")]
     public class LINEController : ApiController
-    {
-        [HttpPost]
+    {       
         [Route]
+        /*
+        [HttpGet]
+        public IEnumerable<string> Get()
+        {
+            Trace.TraceInformation("request Get ");
+            System.Threading.Thread.Sleep(3000);
+            List<SendMessage> msgs = new List<SendMessage>();
+            var msgTxt = new SendMessage() { type = "text", text = "Please wait" };
+            msgs.Add(msgTxt);
+            ReplyBody rb = new ReplyBody()
+            {
+                replyToken = "0ac6df88f38a4cca8b8473728e61355b",
+                messages = msgs
+            };
+
+
+            var message = JsonConvert.SerializeObject(rb);
+            Trace.TraceInformation("message " + message);
+            Trace.TraceInformation("request Get Sleep");            
+            return new string[] { "value1", "value2" };
+        }
+        */       
+
+        [HttpPost]       
         [Signature]
-       
         public async Task<HttpResponseMessage> Post(HttpRequestMessage request)
         {
             if (request != null)
             {
                 var content = await request.Content.ReadAsStringAsync();
                 Trace.TraceInformation("request content " + content);
-                LineWebhookModels dataEvent = JsonConvert.DeserializeObject<LineWebhookModels>(content);               
-
+                LineWebhookModels dataEvent = JsonConvert.DeserializeObject<LineWebhookModels>(content);
+                List<SendMessage> msgWait = new List<SendMessage>();
+                var msgTxtWait = new SendMessage() { type = "text", text = "Please wait" };
+                msgWait.Add(msgTxtWait);
                 List<SendMessage> msgs = new List<SendMessage>();
                 SendMessage sm = new SendMessage();
+
                 foreach (Event e in dataEvent.events)
                 {
                     sm.type = Enum.GetName(typeof(MessageType), e.type);
@@ -42,23 +67,25 @@ namespace LINE_Webhook.Controllers
                     Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
                     msgs.Add(sm);
                     Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
+                    ReplyBody rbWait = new ReplyBody()
+                    {
+                        replyToken = e.replyToken,
+                        messages = msgWait
+                    };
+
                     ReplyBody rb = new ReplyBody()
                     {
                         replyToken = e.replyToken,
                         messages = msgs
                     };
-                    
 
+                    var messageWait = JsonConvert.SerializeObject(rbWait);
                     var message = JsonConvert.SerializeObject(rb);
+                    Trace.TraceInformation("messageWait " + messageWait);
+                    replyMessage(messageWait);
+                    System.Threading.Thread.Sleep(3000);
                     Trace.TraceInformation("message " + message);
                     replyMessage(message);
-                    Task t = Task.Run(() =>
-                    {
-                        replyMessage(message);
-                    });
-                    TimeSpan ts = TimeSpan.FromMilliseconds(500);
-                    if (!t.Wait(ts))
-                        Trace.TraceInformation("The timeout interval elapsed.");
 
                 }
 
