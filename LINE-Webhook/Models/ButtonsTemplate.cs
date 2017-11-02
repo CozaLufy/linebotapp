@@ -10,7 +10,7 @@ namespace LINE_Webhook.Models
         public string type { get; set; }
         public string label { get; set; }
         public string data { get; set; }
-        public string uri { get; set; }
+        //public string uri { get; set; }
     }
 
     public class Template
