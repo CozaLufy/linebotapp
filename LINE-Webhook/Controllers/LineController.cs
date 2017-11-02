@@ -90,9 +90,9 @@ namespace LINE_Webhook.Controllers
                      };
                      */
 
-                    sm.type = Enum.GetName(typeof(MessageType), e.type);
+                    sm.type = Enum.GetName(typeof(EventType), e.type);
                     Trace.TraceInformation("sm.type " + sm.type);
-                    if (sm.type == "message") {
+                    if (Enum.GetName(typeof(EventType), e.type) == "message") {
                         List<PostbackTemplateAction> postBackAction = new List<PostbackTemplateAction>();
                         postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
                         postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Add to cart", data = "action=add&itemid=123" });
