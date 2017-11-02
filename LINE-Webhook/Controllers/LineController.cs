@@ -89,9 +89,7 @@ namespace LINE_Webhook.Controllers
                          messages = msgs
                      };
                      */
-
-                    sm.type = Enum.GetName(typeof(EventType), e.type);
-                    Trace.TraceInformation("sm.type " + sm.type);
+                     
                     if (Enum.GetName(typeof(EventType), e.type) == "message") {
                         List<PostbackTemplateAction> postBackAction = new List<PostbackTemplateAction>();
                         postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
@@ -119,7 +117,7 @@ namespace LINE_Webhook.Controllers
                         replyMessage(message);
                     } else if (sm.type == "postback") {
                         Trace.TraceInformation("postback.data " + e.postback.data);
-                        sm.type = Enum.GetName(typeof(MessageType), e.type);
+                        sm.type = "text";
                         sm.text = e.postback.data;
                         //Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
                         msgs.Add(sm);
