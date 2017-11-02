@@ -91,6 +91,7 @@ namespace LINE_Webhook.Controllers
                      */
 
                     sm.type = Enum.GetName(typeof(MessageType), e.type);
+                    Trace.TraceInformation("sm.type " + sm.type);
                     if (sm.type == "message") {
                         List<PostbackTemplateAction> postBackAction = new List<PostbackTemplateAction>();
                         postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
@@ -114,6 +115,8 @@ namespace LINE_Webhook.Controllers
                             messages = buttonsTemplate
                         };
                         message = JsonConvert.SerializeObject(rbMsgs);
+                        Trace.TraceInformation("message " + message);
+                        replyMessage(message);
                     } else if (sm.type == "postback") {
                         Trace.TraceInformation("postback.data " + e.postback.data);
                         sm.type = Enum.GetName(typeof(MessageType), e.type);
@@ -128,6 +131,8 @@ namespace LINE_Webhook.Controllers
                             messages = msgs
                         };
                         message = JsonConvert.SerializeObject(rbMsgs);
+                        Trace.TraceInformation("message " + message);
+                        replyMessage(message);
                     }
                       
 
@@ -136,8 +141,7 @@ namespace LINE_Webhook.Controllers
                     
                     //replyMessage(messageWait);
                     //System.Threading.Thread.Sleep(3000);
-                    Trace.TraceInformation("message " + message);
-                    replyMessage(message);
+                    
 
                 }
 
