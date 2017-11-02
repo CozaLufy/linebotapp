@@ -21,6 +21,7 @@ namespace LINE_Webhook.Models
         public Source source { get; set; }
         public string replyToken { get; set; }
         public ReceiveMessage message { get; set; }
+        public Postback postback { get; set; }
     }
 
     public class Source
@@ -29,6 +30,10 @@ namespace LINE_Webhook.Models
         public string userId { get; set; }
         public string groupId { get; set; }
         public string roomId { get; set; }
+    }
+    public class Postback
+    {
+        public string data { get; set; }
     }
 
     public abstract class Message<T>

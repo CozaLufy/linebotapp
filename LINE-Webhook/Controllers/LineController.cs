@@ -73,47 +73,67 @@ namespace LINE_Webhook.Controllers
                 */
                 List<SendMessage> msgs = new List<SendMessage>();
                 SendMessage sm = new SendMessage();
-
+                var message = "";
                 foreach (Event e in dataEvent.events)
                 {
-                   /*
+                    /*
+                     sm.type = Enum.GetName(typeof(MessageType), e.type);
+                     sm.text = e.message.text;
+                     Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
+                     msgs.Add(sm);
+                     Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
+
+                     ReplyBody rbMsgs = new ReplyBody()
+                     {
+                         replyToken = e.replyToken,
+                         messages = msgs
+                     };
+                     */
+
                     sm.type = Enum.GetName(typeof(MessageType), e.type);
-                    sm.text = e.message.text;
-                    Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
-                    msgs.Add(sm);
-                    Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
-                    
-                    ReplyBody rbMsgs = new ReplyBody()
-                    {
-                        replyToken = e.replyToken,
-                        messages = msgs
-                    };
-                    */
-                      List<PostbackTemplateAction> postBackAction = new List<PostbackTemplateAction>();
-                      postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
-                      postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Add to cart", data = "action=buy&itemid=123" });
-                      //postBackAction.Add(new PostbackTemplateAction { type = "uri", label = "View detail", uri = "http://www.binaryoptionsu.com/wp-content/uploads/2012/12/Bear-Market.png" });
-                      Template btnTemplate = new Template()
-                      {
-                          type = "buttons",
-                          thumbnailImageUrl = "https://secure.snapp.asia/RHServer/MonsterSize/30022.png",
-                          title = "Menu",
-                          text = "Please select",
-                          actions = postBackAction
-                      };
-                      List<ButtonsTemplate> buttonsTemplate = new List<ButtonsTemplate>();
-                      buttonsTemplate.Add(new ButtonsTemplate { type = "template", altText = "this is a buttons template", template = btnTemplate });
-                      //Trace.TraceInformation("buttonsTemplate " + JsonConvert.SerializeObject(buttonsTemplate));
-                      // msgs.Add(buttonsTemplate);
-                      ReplyBodyTemplate rbMsgs = new ReplyBodyTemplate()
-                      {
-                          replyToken = e.replyToken,
-                          messages = buttonsTemplate
-                      };
+                    if (sm.type == "message") {
+                        List<PostbackTemplateAction> postBackAction = new List<PostbackTemplateAction>();
+                        postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
+                        postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Add to cart", data = "action=add&itemid=123" });
+                        //postBackAction.Add(new PostbackTemplateAction { type = "uri", label = "View detail", uri = "http://www.binaryoptionsu.com/wp-content/uploads/2012/12/Bear-Market.png" });
+                        Template btnTemplate = new Template()
+                        {
+                            type = "buttons",
+                            thumbnailImageUrl = "https://secure.snapp.asia/RHServer/MonsterSize/30022.png",
+                            title = "Menu",
+                            text = "Please select",
+                            actions = postBackAction
+                        };
+                        List<ButtonsTemplate> buttonsTemplate = new List<ButtonsTemplate>();
+                        buttonsTemplate.Add(new ButtonsTemplate { type = "template", altText = "this is a buttons template", template = btnTemplate });
+                        //Trace.TraceInformation("buttonsTemplate " + JsonConvert.SerializeObject(buttonsTemplate));
+                        // msgs.Add(buttonsTemplate);
+                        ReplyBodyTemplate rbMsgs = new ReplyBodyTemplate()
+                        {
+                            replyToken = e.replyToken,
+                            messages = buttonsTemplate
+                        };
+                        message = JsonConvert.SerializeObject(rbMsgs);
+                    } else if (sm.type == "postback") {
+                        Trace.TraceInformation("postback.data " + e.postback.data);
+                        sm.type = Enum.GetName(typeof(MessageType), e.type);
+                        sm.text = e.postback.data;
+                        //Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
+                        msgs.Add(sm);
+                        Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
+
+                        ReplyBody rbMsgs = new ReplyBody()
+                        {
+                            replyToken = e.replyToken,
+                            messages = msgs
+                        };
+                        message = JsonConvert.SerializeObject(rbMsgs);
+                    }
+                      
 
                       //var messageWait = JsonConvert.SerializeObject(rbWait);
                       
-                    var message = JsonConvert.SerializeObject(rbMsgs);
+                    
                     //replyMessage(messageWait);
                     //System.Threading.Thread.Sleep(3000);
                     Trace.TraceInformation("message " + message);
@@ -137,7 +157,6 @@ namespace LINE_Webhook.Controllers
                 var dataString = new StringContent(message, Encoding.UTF8, "application/json");                
                
                 var result = await client.PostAsync("https://api.line.me/v2/bot/message/reply", dataString);
-                Trace.TraceInformation("replyMessage result " + JsonConvert.SerializeObject(result));
                 if (!result.IsSuccessStatusCode)
                 {
                     throw new LineRequestException(result);
