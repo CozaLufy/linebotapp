@@ -136,7 +136,7 @@ namespace LINE_Webhook.Controllers
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", WebConfigurationManager.AppSettings["AccessToken"]);
 
                 var dataString = new StringContent(message, Encoding.UTF8, "application/json");
-
+                Trace.TraceInformation("dataString " + dataString);
                 var result = await client.PostAsync("https://api.line.me/v2/bot/message/reply", dataString);
 
                 if (!result.IsSuccessStatusCode)
