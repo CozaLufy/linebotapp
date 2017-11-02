@@ -89,8 +89,8 @@ namespace LINE_Webhook.Controllers
                          messages = msgs
                      };
                      */
-                     
-                    if (Enum.GetName(typeof(EventType), e.type) == "message") {
+                    var eventType = Enum.GetName(typeof(EventType), e.type);
+                    if (eventType == "message") {
                         List<PostbackTemplateAction> postBackAction = new List<PostbackTemplateAction>();
                         postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
                         postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Add to cart", data = "action=add&itemid=123" });
@@ -115,7 +115,7 @@ namespace LINE_Webhook.Controllers
                         message = JsonConvert.SerializeObject(rbMsgs);
                         Trace.TraceInformation("message " + message);
                         replyMessage(message);
-                    } else if (sm.type == "postback") {
+                    } else if (eventType == "postback") {
                         Trace.TraceInformation("postback.data " + e.postback.data);
                         sm.type = "text";
                         sm.text = e.postback.data;
