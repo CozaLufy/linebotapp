@@ -91,7 +91,8 @@ namespace LINE_Webhook.Controllers
                     */
                     List<PostbackTemplateAction> postBackAction = new List<PostbackTemplateAction>();
                     postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
-                    postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
+                    postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Add to cart", data = "action=buy&itemid=123" });
+                    postBackAction.Add(new PostbackTemplateAction { type = "uri", label = "View detail", uri = "http://www.binaryoptionsu.com/wp-content/uploads/2012/12/Bear-Market.png" });
                     Template template = new Template()
                     {
                         type = "buttons",
