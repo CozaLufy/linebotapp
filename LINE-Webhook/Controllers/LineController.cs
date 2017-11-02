@@ -76,7 +76,7 @@ namespace LINE_Webhook.Controllers
 
                 foreach (Event e in dataEvent.events)
                 {
-                   
+                   /*
                     sm.type = Enum.GetName(typeof(MessageType), e.type);
                     sm.text = e.message.text;
                     Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
@@ -88,7 +88,7 @@ namespace LINE_Webhook.Controllers
                         replyToken = e.replyToken,
                         messages = msgs
                     };
-                    /*
+                    */
                       List<PostbackTemplateAction> postBackAction = new List<PostbackTemplateAction>();
                       postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
                       postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Add to cart", data = "action=buy&itemid=123" });
@@ -96,7 +96,7 @@ namespace LINE_Webhook.Controllers
                       Template btnTemplate = new Template()
                       {
                           type = "buttons",
-                          thumbnailImageUrl = "http://www.binaryoptionsu.com/wp-content/uploads/2012/12/Bear-Market.png",
+                          thumbnailImageUrl = "https://secure.snapp.asia/RHServer/MonsterSize/30022.png",
                           title = "Menu",
                           text = "Please select",
                           actions = postBackAction
@@ -112,9 +112,8 @@ namespace LINE_Webhook.Controllers
                       };
 
                       //var messageWait = JsonConvert.SerializeObject(rbWait);
-                      */
+                      
                     var message = JsonConvert.SerializeObject(rbMsgs);
-                    //Trace.TraceInformation("messageWait " + messageWait);
                     //replyMessage(messageWait);
                     //System.Threading.Thread.Sleep(3000);
                     Trace.TraceInformation("message " + message);
@@ -135,12 +134,10 @@ namespace LINE_Webhook.Controllers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", WebConfigurationManager.AppSettings["AccessToken"]);
 
-                //var dataString = new StringContent(message, Encoding.UTF8, "application/json");
-                StringContent dataString = new StringContent(message, Encoding.UTF8);
-                
-                //Trace.TraceInformation("dataString " + dataString);
+                var dataString = new StringContent(message, Encoding.UTF8, "application/json");                
+               
                 var result = await client.PostAsync("https://api.line.me/v2/bot/message/reply", dataString);
-
+                Trace.TraceInformation("replyMessage result " + JsonConvert.SerializeObject(result));
                 if (!result.IsSuccessStatusCode)
                 {
                     throw new LineRequestException(result);
