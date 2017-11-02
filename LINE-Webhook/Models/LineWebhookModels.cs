@@ -7,7 +7,7 @@ namespace LINE_Webhook.Models
 {
     public enum EventType { message, follow, unfollow, join, leave, postback, beacon }
     public enum SourceType { user, group, room }
-    public enum MessageType { text, image, video, audio, location, sticker }
+    public enum MessageType { text, image, video, audio, location, sticker, template }
 
     public class LineWebhookModels
     {

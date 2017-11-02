@@ -27,23 +27,35 @@ namespace LINE_Webhook.Controllers
         public IEnumerable<string> Get()
         {
             Trace.TraceInformation("request Get ");
-            System.Threading.Thread.Sleep(3000);
-            List<SendMessage> msgs = new List<SendMessage>();
-            var msgTxt = new SendMessage() { type = "text", text = "Please wait" };
-            msgs.Add(msgTxt);
-            ReplyBody rb = new ReplyBody()
-            {
-                replyToken = "0ac6df88f38a4cca8b8473728e61355b",
-                messages = msgs
+            
+             System.Threading.Thread.Sleep(3000);
+             List<SendMessage> msgs = new List<SendMessage>();
+             var msgTxt = new SendMessage() { type = "text", text = "Please wait" };
+             msgs.Add(msgTxt);
+             ReplyBody rb = new ReplyBody()
+             {
+                 replyToken = "0ac6df88f38a4cca8b8473728e61355b",
+                 messages = msgs
+             };
+             var message = JsonConvert.SerializeObject(rb);
+             Trace.TraceInformation("message " + message);
+             Trace.TraceInformation("request Get Sleep");  
+             
+            List<PostbackTemplateAction> postBackAction = new List<PostbackTemplateAction>();
+            postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
+            postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
+            Template template = new Template() {
+                type = "buttons",
+                thumbnailImageUrl = "https://example.com/bot/images/image.jpg",
+                title = "Menu",
+                text = "Please select",
+                actions = postBackAction
             };
-
-
-            var message = JsonConvert.SerializeObject(rb);
-            Trace.TraceInformation("message " + message);
-            Trace.TraceInformation("request Get Sleep");            
+            ButtonsTemplate buttonsTemplate = new ButtonsTemplate { type = "template", altText = "this is a buttons template" , template = template };
+            Trace.TraceInformation("buttonsTemplate " + JsonConvert.SerializeObject(buttonsTemplate));
             return new string[] { "value1", "value2" };
         }
-        */       
+         */     
 
         [HttpPost]       
         [Signature]
@@ -64,26 +76,42 @@ namespace LINE_Webhook.Controllers
 
                 foreach (Event e in dataEvent.events)
                 {
+                    /*
                     sm.type = Enum.GetName(typeof(MessageType), e.type);
                     sm.text = e.message.text;
                     Trace.TraceInformation("sm " + JsonConvert.SerializeObject(sm));
                     msgs.Add(sm);
                     Trace.TraceInformation("msgs " + JsonConvert.SerializeObject(msgs));
-                    /*
+                    
                     ReplyBody rbWait = new ReplyBody()
                     {
                         replyToken = e.replyToken,
                         messages = msgWait
                     };
                     */
-                    ReplyBody rb = new ReplyBody()
+                    List<PostbackTemplateAction> postBackAction = new List<PostbackTemplateAction>();
+                    postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
+                    postBackAction.Add(new PostbackTemplateAction { type = "postback", label = "Buy", data = "action=buy&itemid=123" });
+                    Template template = new Template()
+                    {
+                        type = "buttons",
+                        thumbnailImageUrl = "http://www.binaryoptionsu.com/wp-content/uploads/2012/12/Bear-Market.png",
+                        title = "Menu",
+                        text = "Please select",
+                        actions = postBackAction
+                    };
+                    List<ButtonsTemplate> buttonsTemplate = new List<ButtonsTemplate>();
+                    buttonsTemplate.Add(new ButtonsTemplate { type = "template", altText = "this is a buttons template", template = template });
+                    //Trace.TraceInformation("buttonsTemplate " + JsonConvert.SerializeObject(buttonsTemplate));
+                    // msgs.Add(buttonsTemplate);
+                    ReplyBodyTemplate msgsTemplate = new ReplyBodyTemplate()
                     {
                         replyToken = e.replyToken,
-                        messages = msgs
+                        messages = buttonsTemplate
                     };
 
                     //var messageWait = JsonConvert.SerializeObject(rbWait);
-                    var message = JsonConvert.SerializeObject(rb);
+                    var message = JsonConvert.SerializeObject(msgsTemplate);
                     //Trace.TraceInformation("messageWait " + messageWait);
                     //replyMessage(messageWait);
                     //System.Threading.Thread.Sleep(3000);
